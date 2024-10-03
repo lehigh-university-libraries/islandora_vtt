@@ -52,9 +52,10 @@ function islandora_vtt_get_vtt($media) {
     INNER JOIN {media__field_media_use} u ON u.entity_id = mo.entity_id
     INNER JOIN {media_field_data} m ON m.mid = mo.entity_id
     WHERE mo.bundle = 'extracted_text'
-      AND field_media_use_target_id = 14
+      AND field_media_use_target_id = :tid
       AND field_media_of_target_id = :mid", [
-        ':mid' => $media->field_media_of->target_id
+        ':mid' => $media->field_media_of->target_id,
+        ':tid' => islandora_vtt_extracted_text_tid(),
   ])->fetchField();
   $vtt = $mid ? Media::load($mid) : FALSE;
   return $vtt
@@ -62,4 +63,19 @@ function islandora_vtt_get_vtt($media) {
     && !is_null($vtt->field_media_file)
     && !$vtt->field_media_file->isEmpty()
     && !is_null($vtt->field_media_file->entity) ? $vtt : FALSE;
+}
+
+function islandora_vtt_extracted_text_tid() {
+  static $tid = '';
+  if ($tid != '') {
+    return $tid;
+  }
+
+  $tid = \Drupal::database()->query('SELECT tid FROM {taxonomy_term_field_data}
+    WHERE name = :name AND vid = :vid', [
+      ':vid' => 'islandora_media_use',
+      ':name' => 'Extracted Text',
+    ])->fetchField();
+
+  return $tid;
 }
