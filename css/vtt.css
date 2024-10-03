@@ -1,0 +1,13 @@
+.transcript-box {
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.highlight {
+  background-color: #e9ecef;
+}
+
+.cue mark {
+  background-color: yellow;
+}

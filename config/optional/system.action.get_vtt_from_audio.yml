@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - islandora_text_extraction
+id: get_vtt_from_audio_video
+label: 'Create VTT file from Audio or Video'
+type: node
+plugin: generate_ocr_derivative
+configuration:
+  queue: islandora-connector-whisper
+  event: 'Generate Derivative'
+  source_term_uri: 'http://pcdm.org/use#OriginalFile'
+  derivative_term_uri: 'http://pcdm.org/use#ExtractedText'
+  mimetype: text/plain
+  args: ''
+  destination_media_type: extracted_text
+  scheme: private
+  path: 'derivatives/vtt/[node:nid].txt'

@@ -1,0 +1,12 @@
+vtt:
+  version: 1.0.0
+  js:
+    js/vtt.js: {}
+  css:
+    theme:
+      css/vtt.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once

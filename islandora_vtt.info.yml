@@ -1,0 +1,9 @@
+name: 'Islandora VTT'
+type: module
+description: 'Support generating and displaying VTT files for audio and video'
+core_version_requirement: ^10
+package: 'Islandora'
+dependencies:
+  - islandora:islandora
+  - context:context
+  - islandora_text_extraction:islandora_text_extraction

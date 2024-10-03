@@ -1,0 +1,65 @@
+<?php
+
+use Drupal\media\Entity\Media;
+
+function islandora_vtt_preprocess_media(&$vars) {
+  if (!in_array($vars['view_mode'], ['full', 'default_islandora_display'])) {
+    return;
+  }
+
+  $media = $vars['media'];
+  if (empty($media) || !in_array($media->bundle(), ['audio', 'video'])) {
+    return;
+  }
+
+  $vtt = islandora_vtt_get_vtt($media);
+  if (!$vtt) {
+    return;
+  }
+
+  $vars['content']['vtt'] = [
+    '#type' => 'inline_template',
+    '#template' => '<div id="transcript" class="d-flex mt-3 mb-3 align-items-center">
+                      <div class="d-flex align-items-center me-5">
+                        <div class="input-group me-auto">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search transcript...">
+                            <span class="input-group-text ps-0 pe-0" id="vtt-search-btn">
+                              <button class="trigger btn">
+                                <img class="leh-search--icon icon img-square" src="https://www.lehigh.edu/~inltswms/images/icons/search.svg" alt="Location" width="24" height="24">
+                              </button>
+                            </span>
+                            </div>
+                      </div>
+
+                      <div class="d-flex justify-content-center align-items-center">
+                          <button id="prevBtn" class="btn btn-secondary me-2 trigger" disabled>&lt;</button>
+                          <span id="pagerInfo"></span>
+                          <button id="nextBtn" class="btn btn-secondary ms-2 trigger" disabled>&gt;</button>
+                      </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-body transcript-box" id="transcriptBox"></div>
+                  </div>'
+  ];
+  $vars['#attached']['library'][] = 'lehigh/vtt';
+  $vars['#attached']['drupalSettings']['vttUrl'] = $vtt->field_media_file->entity->createFileUrl();
+  $vars['#attached']['drupalSettings']['vttPlayerType'] = $media->bundle();
+}
+
+function islandora_vtt_get_vtt($media) {
+  $mid = \Drupal::database()->query("SELECT mid
+    FROM {media__field_media_of} mo
+    INNER JOIN {media__field_media_use} u ON u.entity_id = mo.entity_id
+    INNER JOIN {media_field_data} m ON m.mid = mo.entity_id
+    WHERE mo.bundle = 'extracted_text'
+      AND field_media_use_target_id = 14
+      AND field_media_of_target_id = :mid", [
+        ':mid' => $media->field_media_of->target_id
+  ])->fetchField();
+  $vtt = $mid ? Media::load($mid) : FALSE;
+  return $vtt
+    && $vtt->access('view')
+    && !is_null($vtt->field_media_file)
+    && !$vtt->field_media_file->isEmpty()
+    && !is_null($vtt->field_media_file->entity) ? $vtt : FALSE;
+}
