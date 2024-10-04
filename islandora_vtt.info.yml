@@ -6,4 +6,4 @@ package: 'Islandora'
 dependencies:
   - islandora:islandora
   - context:context
-  - islandora_text_extraction:islandora_text_extraction
+  - islandora:islandora_text_extraction
