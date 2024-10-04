@@ -1,0 +1,25 @@
+<div id="transcript" class="d-flex mt-3 mb-3 align-items-center">
+  <div class="d-flex align-items-center me-5">
+    <div class="input-group me-auto">
+      <input type="text" id="searchInput" class="form-control" placeholder="Search transcript...">
+      <span class="input-group-text ps-0 pe-0" id="vtt-search-btn">
+        <button class="trigger btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+            <line x1="16" y1="16" x2="22" y2="22" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+      </span>
+      </div>
+  </div>
+
+  <div class="d-flex justify-content-center align-items-center">
+    <button id="prevBtn" class="btn btn-secondary me-2 trigger" disabled>&lt;</button>
+    <span id="pagerInfo"></span>
+    <button id="nextBtn" class="btn btn-secondary ms-2 trigger" disabled>&gt;</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body transcript-box" id="transcriptBox"></div>
+</div>

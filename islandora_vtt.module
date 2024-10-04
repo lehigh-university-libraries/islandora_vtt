@@ -2,6 +2,19 @@
 
 use Drupal\media\Entity\Media;
 
+/**
+ * Implements hook_theme().
+ */
+function islandora_vtt_theme($existing, $type, $theme, $path) {
+  return [
+    'vtt_transcript' => [
+      'variables' => [],
+      'template' => 'vtt-transcript',
+      'path' => $path . '/templates',
+    ],
+  ];
+}
+
 function islandora_vtt_preprocess_media(&$vars) {
   if (!in_array($vars['view_mode'], ['full', 'default_islandora_display'])) {
     return;
@@ -18,30 +31,9 @@ function islandora_vtt_preprocess_media(&$vars) {
   }
 
   $vars['content']['vtt'] = [
-    '#type' => 'inline_template',
-    '#template' => '<div id="transcript" class="d-flex mt-3 mb-3 align-items-center">
-                      <div class="d-flex align-items-center me-5">
-                        <div class="input-group me-auto">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Search transcript...">
-                            <span class="input-group-text ps-0 pe-0" id="vtt-search-btn">
-                              <button class="trigger btn">
-                                <img class="leh-search--icon icon img-square" src="https://www.lehigh.edu/~inltswms/images/icons/search.svg" alt="Location" width="24" height="24">
-                              </button>
-                            </span>
-                            </div>
-                      </div>
-
-                      <div class="d-flex justify-content-center align-items-center">
-                          <button id="prevBtn" class="btn btn-secondary me-2 trigger" disabled>&lt;</button>
-                          <span id="pagerInfo"></span>
-                          <button id="nextBtn" class="btn btn-secondary ms-2 trigger" disabled>&gt;</button>
-                      </div>
-                  </div>
-                  <div class="card">
-                    <div class="card-body transcript-box" id="transcriptBox"></div>
-                  </div>'
+    '#theme' => 'vtt_transcript',
   ];
-  $vars['#attached']['library'][] = 'lehigh/vtt';
+  $vars['#attached']['library'][] = 'islandora_vtt/vtt';
   $vars['#attached']['drupalSettings']['vttUrl'] = $vtt->field_media_file->entity->createFileUrl();
   $vars['#attached']['drupalSettings']['vttPlayerType'] = $media->bundle();
 }
