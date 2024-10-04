@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains islandora_vtt.module.
+ */
+
 use Drupal\media\Entity\Media;
 
 /**
@@ -15,6 +20,9 @@ function islandora_vtt_theme($existing, $type, $theme, $path) {
   ];
 }
 
+/**
+ * Implements hook_preprocess_media().
+ */
 function islandora_vtt_preprocess_media(&$vars) {
   if (!in_array($vars['view_mode'], ['full', 'default_islandora_display'])) {
     return;
@@ -38,6 +46,9 @@ function islandora_vtt_preprocess_media(&$vars) {
   $vars['#attached']['drupalSettings']['vttPlayerType'] = $media->bundle();
 }
 
+/**
+ * Helper function to get a media's sibling VTT URL.
+ */
 function islandora_vtt_get_vtt($media) {
   $mid = \Drupal::database()->query("SELECT mid
     FROM {media__field_media_of} mo
@@ -48,7 +59,7 @@ function islandora_vtt_get_vtt($media) {
       AND field_media_of_target_id = :mid", [
         ':mid' => $media->field_media_of->target_id,
         ':tid' => islandora_vtt_extracted_text_tid(),
-  ])->fetchField();
+      ])->fetchField();
   $vtt = $mid ? Media::load($mid) : FALSE;
   return $vtt
     && $vtt->access('view')
@@ -57,6 +68,9 @@ function islandora_vtt_get_vtt($media) {
     && !is_null($vtt->field_media_file->entity) ? $vtt : FALSE;
 }
 
+/**
+ * Helper function to get the extracted text term ID.
+ */
 function islandora_vtt_extracted_text_tid() {
   static $tid = '';
   if ($tid != '') {
