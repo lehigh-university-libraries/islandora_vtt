@@ -138,17 +138,22 @@
       highlightCue: function () {
         const player = document.querySelector(drupalSettings.vttPlayerType);
         const currentTime = player.currentTime;
+        const transcriptBox = document.getElementById('transcriptBox');
+
         this.cues.forEach((cue, index) => {
           const cueElement = document.getElementById(`cue-${index}`);
           if (currentTime >= cue.start && currentTime <= cue.end) {
             cueElement.classList.add('highlight');
-            cueElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            transcriptBox.scrollTo({
+              top: cueElement.offsetTop - transcriptBox.offsetTop,
+              behavior: 'smooth'
+            });
           } else {
             cueElement.classList.remove('highlight');
           }
         });
       },
-  
+
       searchTranscript: function () {
         const searchInput = document.getElementById('searchInput').value.toLowerCase();
         const cueElements = document.querySelectorAll('.cue');
