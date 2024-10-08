@@ -40,6 +40,7 @@ function islandora_vtt_preprocess_media(&$vars) {
 
   $vars['content']['vtt'] = [
     '#theme' => 'vtt_transcript',
+    '#weight' => 100,
   ];
   $vars['#attached']['library'][] = 'islandora_vtt/vtt';
   $vars['#attached']['drupalSettings']['vttUrl'] = $vtt->field_media_file->entity->createFileUrl();
