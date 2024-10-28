@@ -1,7 +1,7 @@
 name: 'Islandora VTT'
 type: module
 description: 'Support generating and displaying VTT files for audio and video'
-core_version_requirement: ^10
+core_version_requirement: ^10 || ^11
 package: 'Islandora'
 dependencies:
   - islandora:islandora
