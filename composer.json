@@ -1,0 +1,11 @@
+{
+    "name": "drupal/islandora_vtt",
+    "type": "drupal-module",
+    "description": "Support generating and displaying VTT files for audio and video files in your Islandora repository",
+    "homepage": "https://www.drupal.org/project/islandora_vtt",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/islandora_vtt",
+        "source": "https://www.drupal.org/project/islandora_vtt"
+    }
+}
