@@ -1,5 +1,5 @@
 vtt:
-  version: 1.0.0
+  version: 1.1.0
   js:
     js/vtt.js: {}
   css:
@@ -9,4 +9,5 @@ vtt:
     - core/jquery
     - core/drupal
     - core/drupalSettings
+    - core/once
     - core/jquery.once

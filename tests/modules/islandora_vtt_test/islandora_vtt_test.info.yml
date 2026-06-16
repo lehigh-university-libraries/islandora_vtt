@@ -1,0 +1,5 @@
+name: 'Islandora VTT test'
+type: module
+description: 'Provides test routes for Islandora VTT.'
+package: Testing
+core_version_requirement: ^10.1 || ^11 || ^12
