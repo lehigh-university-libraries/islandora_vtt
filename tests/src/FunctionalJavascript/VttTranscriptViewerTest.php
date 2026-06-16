@@ -77,6 +77,7 @@ class VttTranscriptViewerTest extends WebDriverTestBase {
 
     $this->drupalGet($media->toUrl());
     $this->ensurePlayerElement();
+    $this->loadTranscriptViewer();
     $this->assertTrue($this->assertSession()->waitForText('Single English transcript'));
 
     $this->assertSession()->elementExists('css', '#vttLanguageControl.d-none');
@@ -95,6 +96,7 @@ class VttTranscriptViewerTest extends WebDriverTestBase {
 
     $this->drupalGet($media->toUrl());
     $this->ensurePlayerElement();
+    $this->loadTranscriptViewer();
     $this->assertTrue($this->assertSession()->waitForText('Multi English transcript'));
 
     $this->assertSession()->elementExists('css', '#vttLanguageControl:not(.d-none)');
@@ -415,6 +417,17 @@ class VttTranscriptViewerTest extends WebDriverTestBase {
       if (!document.querySelector('video')) {
         document.body.insertAdjacentHTML('afterbegin', '<video controls></video>');
       }
+    JS);
+  }
+
+  /**
+   * Starts the transcript viewer after the synthetic player exists.
+   */
+  protected function loadTranscriptViewer(): void {
+    $this->assertNotEmpty($this->getSession()->evaluateScript('drupalSettings.vttTranscripts || []'));
+    $this->getSession()->executeScript(<<<'JS'
+      Drupal.behaviors.islandoraVtt.buildLanguageControl(drupalSettings.vttTranscripts);
+      Drupal.behaviors.islandoraVtt.loadTranscript(drupalSettings.vttTranscripts[0]);
     JS);
   }
 
