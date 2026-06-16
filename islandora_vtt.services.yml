@@ -1,0 +1,5 @@
+
+services:
+  Drupal\islandora_vtt\Hook\IslandoraVttHooks:
+    class: Drupal\islandora_vtt\Hook\IslandoraVttHooks
+    autowire: true
