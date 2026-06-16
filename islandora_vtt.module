@@ -4,6 +4,7 @@
  * @file
  * Contains islandora_vtt.module.
  */
+
 use Drupal\Core\Hook\Attribute\LegacyHook;
 use Drupal\islandora_vtt\Hook\IslandoraVttHooks;
 use Drupal\media\Entity\Media;
@@ -20,31 +21,93 @@ function islandora_vtt_theme($existing, $type, $theme, $path) {
  * Implements hook_preprocess_media().
  */
 #[LegacyHook]
-function islandora_vtt_preprocess_media(&$vars)
-{
-    \Drupal::service(IslandoraVttHooks::class)->preprocessMedia($vars);
+function islandora_vtt_preprocess_media(&$vars) {
+  \Drupal::service(IslandoraVttHooks::class)->preprocessMedia($vars);
 }
 
 /**
- * Helper function to get a media's sibling VTT URL.
+ * Helper function to get a media's sibling VTT files.
+ */
+function islandora_vtt_get_vtts($media) {
+  $rows = islandora_vtt_get_vtt_file_rows($media);
+  if (empty($rows)) {
+    return [];
+  }
+
+  $mids = array_column($rows, 'mid');
+  return Media::loadMultiple($mids);
+}
+
+/**
+ * Helper function to get VTT file rows from the current node.
+ */
+function islandora_vtt_get_vtt_file_rows($media) {
+  $node_id = islandora_vtt_get_node_id($media);
+  if (!$node_id) {
+    return [];
+  }
+
+  $tid = islandora_vtt_extracted_text_tid();
+  if (!$tid) {
+    return [];
+  }
+
+  $query = \Drupal::database()->select('media_field_data', 'mfd');
+  $query->join('media__field_media_of', 'mo', 'mo.entity_id = mfd.mid');
+  $query->join('media__field_media_use', 'u', 'u.entity_id = mfd.mid');
+  $query->join('media__field_media_file', 'f', 'f.entity_id = mfd.mid');
+  $query->join('file_managed', 'fm', 'fm.fid = f.field_media_file_target_id');
+  $query
+    ->fields('mfd', ['mid', 'bundle', 'langcode']);
+  $query->addField('f', 'field_media_file_target_id', 'fid');
+  $query->addField('fm', 'uri', 'uri');
+  $query->addField('fm', 'filename', 'filename');
+  $rows = $query
+    ->condition('mo.deleted', 0)
+    ->condition('u.deleted', 0)
+    ->condition('f.deleted', 0)
+    ->condition('mfd.bundle', 'extracted_text')
+    ->condition('mo.field_media_of_target_id', $node_id)
+    ->condition('u.field_media_use_target_id', $tid)
+    ->orderBy('mfd.langcode')
+    ->orderBy('mfd.mid')
+    ->execute()
+    ->fetchAllAssoc('mid');
+
+  if (empty($rows)) {
+    return [];
+  }
+
+  $media_by_id = Media::loadMultiple(array_keys($rows));
+  return array_filter($rows, static function ($row) use ($media_by_id) {
+    return isset($media_by_id[$row->mid]) && $media_by_id[$row->mid]->access('view');
+  });
+}
+
+/**
+ * Helper function to get the node ID that should own the VTT media.
+ */
+function islandora_vtt_get_node_id($media) {
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (is_object($node) && $node->id()) {
+    return $node->id();
+  }
+  if (is_numeric($node)) {
+    return $node;
+  }
+  if ($media->hasField('field_media_of') && !$media->field_media_of->isEmpty()) {
+    return $media->field_media_of->target_id;
+  }
+
+  return NULL;
+}
+
+/**
+ * Helper function to get the first media sibling VTT file.
  */
 function islandora_vtt_get_vtt($media) {
-  $mid = \Drupal::database()->query("SELECT mid
-    FROM {media__field_media_of} mo
-    INNER JOIN {media__field_media_use} u ON u.entity_id = mo.entity_id
-    INNER JOIN {media_field_data} m ON m.mid = mo.entity_id
-    WHERE mo.bundle = 'extracted_text'
-      AND field_media_use_target_id = :tid
-      AND field_media_of_target_id = :mid", [
-        ':mid' => $media->field_media_of->target_id,
-        ':tid' => islandora_vtt_extracted_text_tid(),
-      ])->fetchField();
-  $vtt = $mid ? Media::load($mid) : FALSE;
-  return $vtt
-    && $vtt->access('view')
-    && !is_null($vtt->field_media_file)
-    && !$vtt->field_media_file->isEmpty()
-    && !is_null($vtt->field_media_file->entity) ? $vtt : FALSE;
+  $vtts = islandora_vtt_get_vtts($media);
+  return reset($vtts) ?: FALSE;
 }
 
 /**

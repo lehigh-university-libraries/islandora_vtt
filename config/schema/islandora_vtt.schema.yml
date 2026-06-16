@@ -1,0 +1,31 @@
+action.configuration.generate_ocr_derivative:
+  type: mapping
+  label: 'Generate OCR derivative action configuration'
+  mapping:
+    queue:
+      type: string
+      label: 'Queue'
+    event:
+      type: string
+      label: 'Event'
+    source_term_uri:
+      type: uri
+      label: 'Source term URI'
+    derivative_term_uri:
+      type: uri
+      label: 'Derivative term URI'
+    mimetype:
+      type: string
+      label: 'MIME type'
+    args:
+      type: string
+      label: 'Arguments'
+    destination_media_type:
+      type: string
+      label: 'Destination media type'
+    scheme:
+      type: string
+      label: 'File scheme'
+    path:
+      type: string
+      label: 'Path'
