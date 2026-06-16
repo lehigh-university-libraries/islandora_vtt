@@ -32,6 +32,7 @@ class IslandoraVttHooks {
   public static function preprocessMedia(&$vars) {
     if (!in_array($vars['view_mode'], [
       'full',
+      'default',
       'default_islandora_display',
     ])) {
       return;
