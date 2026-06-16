@@ -27,6 +27,7 @@ class VttTranscriptViewerTest extends WebDriverTestBase {
     'islandora',
     'islandora_core_feature',
     'islandora_text_extraction',
+    'islandora_vtt_test',
     'islandora_vtt',
     'language',
     'text',
@@ -75,7 +76,7 @@ class VttTranscriptViewerTest extends WebDriverTestBase {
     $media = $this->createPlayableMedia($node, 'Single-language video');
     $this->createTranscriptMedia($node, 'en', 'single-en.vtt', 'Single English transcript');
 
-    $this->drupalGet($media->toUrl());
+    $this->drupalGet('/islandora-vtt-test/media/' . $media->id());
     $this->ensurePlayerElement();
     $this->loadTranscriptViewer();
     $this->assertTrue($this->assertSession()->waitForText('Single English transcript'));
@@ -94,7 +95,7 @@ class VttTranscriptViewerTest extends WebDriverTestBase {
     $this->createTranscriptMedia($node, 'en', 'multi-en.vtt', 'Multi English transcript');
     $this->createTranscriptMedia($node, 'fr', 'multi-fr.vtt', 'Transcription francaise');
 
-    $this->drupalGet($media->toUrl());
+    $this->drupalGet('/islandora-vtt-test/media/' . $media->id());
     $this->ensurePlayerElement();
     $this->loadTranscriptViewer();
     $this->assertTrue($this->assertSession()->waitForText('Multi English transcript'));

@@ -1,0 +1,10 @@
+islandora_vtt_test.media:
+  path: '/islandora-vtt-test/media/{media}'
+  defaults:
+    _controller: '\Drupal\islandora_vtt_test\Controller\IslandoraVttTestController::media'
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      media:
+        type: entity:media
